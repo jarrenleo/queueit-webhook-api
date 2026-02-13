@@ -40,7 +40,7 @@ async function processTKTData(data: any): Promise<ProcessedData> {
   const link = fields[6].value.split("||")[1];
   const timestamp = Date.now();
 
-  await sql`INSERT INTO "TKT Records" (bot, proxy, timestamp) VALUES (${"TKT"}, ${proxy}, ${new Date(timestamp).toISOString()})`;
+  await sql`INSERT INTO "Logs" (bot, proxy, timestamp) VALUES (${"TKT"}, ${proxy}, ${new Date(timestamp).toISOString()})`;
 
   return {
     id,
@@ -48,6 +48,21 @@ async function processTKTData(data: any): Promise<ProcessedData> {
     link,
     click_count: 0,
     timestamp,
+  };
+}
+
+async function processTSplashData(data: any): Promise<ProcessedData> {
+  const link = data.embeds[0].url;
+  const proxy = data.embeds[0].fields[4].value.split("||")[1];
+
+  await sql`INSERT INTO "Logs" (bot, proxy, timestamp) VALUES (${"T-Splash"}, ${proxy}, ${new Date(Date.now()).toISOString()})`;
+
+  return {
+    id: randomUUID(),
+    bot_name: "T-Splash",
+    link,
+    click_count: 0,
+    timestamp: Date.now(),
   };
 }
 
@@ -61,6 +76,8 @@ export async function processData(data: any): Promise<ProcessedData | null> {
       return processOWData(data);
     case "--Queue SUCCESS--":
       return await processTKTData(data);
+    case "Exported Link":
+      return processTSplashData(data);
     default:
       return null;
   }

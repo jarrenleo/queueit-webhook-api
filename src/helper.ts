@@ -9,6 +9,21 @@ export interface ProcessedData {
   timestamp: number;
 }
 
+export interface TicketData {
+  bookingRef: string;
+  email: string;
+  eventName: string;
+  venue: string;
+  category: string;
+  quantity: number;
+  seatAssignment: Record<string, string>[];
+  pricePerTicket: number;
+  totalPrice: number;
+  paymentType: string;
+  ticketType: string;
+  startTime: string;
+}
+
 function processSBData(data: any): ProcessedData {
   const link = data.embeds[0].url;
 
@@ -64,6 +79,25 @@ async function processTSplashData(data: any): Promise<ProcessedData> {
     click_count: 0,
     timestamp: Date.now(),
   };
+}
+
+export async function insertTicket(ticket: TicketData) {
+  const {
+    bookingRef,
+    email,
+    eventName,
+    venue,
+    category,
+    quantity,
+    seatAssignment,
+    pricePerTicket,
+    totalPrice,
+    paymentType,
+    ticketType,
+    startTime,
+  } = ticket;
+
+  await sql`INSERT INTO "Tickets" (booking_ref, email, event_name, venue, category, quantity, seat_assignment, price_per_ticket, total_price, payment_type, ticket_type, start_time) VALUES (${bookingRef}, ${email}, ${eventName}, ${venue}, ${category}, ${+quantity}, ${sql.json(seatAssignment)}, ${+pricePerTicket}, ${+totalPrice}, ${paymentType}, ${ticketType}, ${startTime})`;
 }
 
 export async function processData(data: any): Promise<ProcessedData | null> {

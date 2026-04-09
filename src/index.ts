@@ -2,7 +2,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { streamSSE } from "hono/streaming";
 import { createClient } from "redis";
-import { processData, type ProcessedData } from "./helper";
+import { processData, insertTicket, type ProcessedData } from "./helper";
+import sql from "./db";
 
 const app = new Hono();
 
@@ -164,6 +165,20 @@ app.post("/webhook", async (c) => {
   broadcast(processedData, "new_data");
 
   return c.json({ success: true }, 201);
+});
+
+// POST /tickets - Insert ticket booking into PostgreSQL
+app.post("/tickets", async (c) => {
+  const data = await c.req.json();
+
+  try {
+    await insertTicket(data);
+
+    return c.json({ success: true }, 201);
+  } catch (error) {
+    console.error("Failed to insert ticket:", error);
+    return c.json({ success: false, reason: "internal_error" }, 500);
+  }
 });
 
 // POST /click/:id - Increment click count

@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import sql from "./db";
 
 export interface ProcessedData {
@@ -28,7 +27,7 @@ function processSBData(data: any): ProcessedData {
   const link = data.embeds[0].url;
 
   return {
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     bot_name: "SecuredBot",
     link,
     click_count: 0,
@@ -40,7 +39,7 @@ function processOWData(data: any): ProcessedData {
   const link = data.embeds[0].fields[0].value;
 
   return {
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     bot_name: "OW",
     link,
     click_count: 0,
@@ -49,7 +48,7 @@ function processOWData(data: any): ProcessedData {
 }
 
 async function processTKTData(data: any): Promise<ProcessedData> {
-  const id = randomUUID();
+  const id = crypto.randomUUID();
   const fields = data.embeds[0].fields;
   const proxy = fields[4].value.split("||")[1];
   const link = fields[6].value.split("||")[1];
@@ -73,7 +72,7 @@ async function processTSplashData(data: any): Promise<ProcessedData> {
   await sql`INSERT INTO "Logs" (bot, proxy, timestamp) VALUES (${"T-Splash"}, ${proxy}, ${new Date(Date.now()).toISOString()})`;
 
   return {
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     bot_name: "T-Splash",
     link,
     click_count: 0,

@@ -23,6 +23,11 @@ export interface TicketData {
   startTime: string;
 }
 
+const formatter = new Intl.NumberFormat("en-MY", {
+  style: "currency",
+  currency: "MYR",
+});
+
 function processSBData(data: any): ProcessedData {
   const link = data.embeds[0].url;
 
@@ -96,7 +101,7 @@ export async function insertTicket(ticket: TicketData) {
     startTime,
   } = ticket;
 
-  await sql`INSERT INTO "Tickets" (booking_ref, email, event_name, venue, category, quantity, seat_assignment, price_per_ticket, total_price, payment_type, ticket_type, start_time) VALUES (${bookingRef}, ${email}, ${eventName}, ${venue}, ${category}, ${+quantity}, ${sql.json(seatAssignment)}, ${+pricePerTicket}, ${+totalPrice}, ${paymentType}, ${ticketType}, ${startTime})`;
+  await sql`INSERT INTO "Tickets" (booking_ref, email, event_name, venue, category, quantity, seat_assignment, price_per_ticket, total_price, payment_type, ticket_type, start_time) VALUES (${bookingRef}, ${email}, ${eventName}, ${venue}, ${category}, ${+quantity}, ${sql.json(seatAssignment)}, ${formatter.format(+pricePerTicket)}, ${formatter.format(+totalPrice)}, ${paymentType}, ${ticketType}, ${startTime})`;
 }
 
 export async function processData(data: any): Promise<ProcessedData | null> {

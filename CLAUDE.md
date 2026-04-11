@@ -67,17 +67,15 @@ interface ProcessedData {
 }
 
 interface TicketData {
-  bookingRef: string;
-  email: string;
-  eventName: string;
-  venue: string;
+  dateTime: string;
   category: string;
+  section: string;
+  row: string;
+  seatNo: string;
   quantity: number;
-  seatAssignment: Record<string, string>[];
   pricePerTicket: number;
   totalPrice: number;
-  paymentType: string;
-  ticketType: string;
-  startTime: string;
+  email: string;
+  bookingRef: string;
 }
 ```

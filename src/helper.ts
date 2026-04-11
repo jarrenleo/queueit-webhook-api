@@ -9,18 +9,16 @@ export interface ProcessedData {
 }
 
 export interface TicketData {
-  bookingRef: string;
-  email: string;
-  eventName: string;
-  venue: string;
+  dateTime: string;
   category: string;
+  section: string;
+  row: string;
+  seatNo: string;
   quantity: number;
-  seatAssignment: Record<string, string>[];
   pricePerTicket: number;
   totalPrice: number;
-  paymentType: string;
-  ticketType: string;
-  startTime: string;
+  email: string;
+  bookingRef: string;
 }
 
 const formatter = new Intl.NumberFormat("en-MY", {
@@ -87,21 +85,19 @@ async function processTSplashData(data: any): Promise<ProcessedData> {
 
 export async function insertTicket(ticket: TicketData) {
   const {
-    bookingRef,
-    email,
-    eventName,
-    venue,
+    dateTime,
     category,
+    section,
+    row,
+    seatNo,
     quantity,
-    seatAssignment,
     pricePerTicket,
     totalPrice,
-    paymentType,
-    ticketType,
-    startTime,
+    email,
+    bookingRef,
   } = ticket;
 
-  await sql`INSERT INTO "Tickets" (booking_ref, email, event_name, venue, category, quantity, seat_assignment, price_per_ticket, total_price, payment_type, ticket_type, start_time) VALUES (${bookingRef}, ${email}, ${eventName}, ${venue}, ${category}, ${+quantity}, ${sql.json(seatAssignment)}, ${pricePerTicket}, ${totalPrice}, ${paymentType}, ${ticketType}, ${startTime})`;
+  await sql`INSERT INTO "Tickets" (date_time, category, section, row, seat_no, quantity, price_per_ticket, total_price, email, booking_ref) VALUES (${dateTime}, ${category}, ${section}, ${row}, ${seatNo}, ${quantity}, ${pricePerTicket}, ${totalPrice}, ${email}, ${bookingRef})`;
 }
 
 export async function processData(data: any): Promise<ProcessedData | null> {
